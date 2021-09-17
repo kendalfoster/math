@@ -21,8 +21,7 @@ namespace math {
  * match the size of A.
  */
 template <typename EigMat1, typename EigMat2,
-          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
-          require_all_not_vt_fvar<EigMat1, EigMat2>* = nullptr>
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
 inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
                      EigMat1::RowsAtCompileTime, EigMat2::ColsAtCompileTime>
 mdivide_right(const EigMat1& b, const EigMat2& A) {
@@ -32,10 +31,10 @@ mdivide_right(const EigMat1& b, const EigMat2& A) {
   if (A.size() == 0) {
     return {b.rows(), 0};
   }
-  return A.template cast<T_return>().eval().tranpose()
+  return A.template cast<T_return>().eval().transpose()
       .lu()
-      .solve(b.template cast<T_return>().eval()
-                 ).transpose();
+      .solve(b.template cast<T_return>().eval().transpose()
+    ).transpose().eval();
 }
 
 }  // namespace math
