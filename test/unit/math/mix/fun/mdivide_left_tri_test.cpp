@@ -8,7 +8,6 @@ TEST(MathMixMatFun, mdivideLeftTri) {
     return stan::math::mdivide_left_tri<Eigen::Upper>(x, y);
   };
 
-
   // size zero inputs
   Eigen::MatrixXd m00(0, 0);
   Eigen::VectorXd v0(0);
@@ -103,5 +102,4 @@ TEST(MathMixMatFun, mdivideLeftTri) {
   // exceptions: wrong types
   stan::test::expect_ad(f, m33, rv3);
   stan::test::expect_ad_matvar(f, m33, rv3);
-  
 }

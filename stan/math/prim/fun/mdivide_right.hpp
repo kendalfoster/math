@@ -31,10 +31,13 @@ mdivide_right(const EigMat1& b, const EigMat2& A) {
   if (A.size() == 0) {
     return {b.rows(), 0};
   }
-  return A.template cast<T_return>().eval().transpose()
+  return A.template cast<T_return>()
+      .eval()
+      .transpose()
       .lu()
-      .solve(b.template cast<T_return>().eval().transpose()
-    ).transpose().eval();
+      .solve(b.template cast<T_return>().eval().transpose())
+      .transpose()
+      .eval();
 }
 
 }  // namespace math

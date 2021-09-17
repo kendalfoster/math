@@ -30,12 +30,20 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &b) {
   using T_return = return_type_t<T1, T2>;
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
-  using ret_type = decltype(A.template cast<T_return>().eval().template triangularView<TriView>().solve(b.template cast<T_return>().eval()).eval());
+  using ret_type = decltype(A.template cast<T_return>()
+                                .eval()
+                                .template triangularView<TriView>()
+                                .solve(b.template cast<T_return>().eval())
+                                .eval());
   if (A.rows() == 0) {
     return ret_type(0, b.cols());
   }
 
-  return A.template cast<T_return>().eval().template triangularView<TriView>().solve(b.template cast<T_return>().eval()).eval();
+  return A.template cast<T_return>()
+      .eval()
+      .template triangularView<TriView>()
+      .solve(b.template cast<T_return>().eval())
+      .eval();
 }
 
 /**

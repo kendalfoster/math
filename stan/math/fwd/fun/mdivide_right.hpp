@@ -40,9 +40,10 @@ inline auto mdivide_right(const EigMat1& A, const EigMat2& b) {
   Eigen::Matrix<T2, R2, C2> val_b = b_ref.val();
   Eigen::Matrix<T2, R2, C2> deriv_b = b_ref.d();
 
-  Eigen::Matrix<return_type_t<T1, T2>, R1, C2> A_mult_inv_b = mdivide_right(val_A, val_b).template cast<return_type_t<T1, T2>>().eval();
-  Eigen::Matrix<ret_scalar, R1, C2> res = A_mult_inv_b.template cast<ret_scalar>().eval();
-  res.d() = subtract(mdivide_right(deriv_A, val_b),
+  Eigen::Matrix<return_type_t<T1, T2>, R1, C2> A_mult_inv_b =
+mdivide_right(val_A, val_b).template cast<return_type_t<T1, T2>>().eval();
+  Eigen::Matrix<ret_scalar, R1, C2> res = A_mult_inv_b.template
+cast<ret_scalar>().eval(); res.d() = subtract(mdivide_right(deriv_A, val_b),
   multiply(A_mult_inv_b, mdivide_right(deriv_b, val_b)));
   return res;
 }
@@ -68,8 +69,8 @@ mdivide_right(const EigMat1& A, const EigMat2& b) {
   auto&& A_ref = to_ref(A);
   Eigen::Matrix<T, R1, C1> val_A = A_ref.val();
   Eigen::Matrix<T, R1, C1> deriv_A = A_ref.d();
-  Eigen::Matrix<value_type_t<EigMat1>, R1, C2> res = mdivide_right(val_A, b).template cast<value_type_t<EigMat1>>();
-  res.d() = mdivide_right(deriv_A, b);
+  Eigen::Matrix<value_type_t<EigMat1>, R1, C2> res = mdivide_right(val_A,
+b).template cast<value_type_t<EigMat1>>(); res.d() = mdivide_right(deriv_A, b);
   return res;
 }
 
@@ -96,9 +97,9 @@ mdivide_right(const EigMat1& A, const EigMat2& b) {
   Eigen::Matrix<T, R2, C2> deriv_b = b_ref.d();
 
   Eigen::Matrix<T, R1, C2> A_mult_inv_b = mdivide_right(A, val_b);
-  Eigen::Matrix<value_type_t<EigMat2>, R1, C2> res = A_mult_inv_b.template cast<value_type_t<EigMat2>>();
-  res.d() = -multiply(A_mult_inv_b, mdivide_right(deriv_b, val_b));
-  return res;
+  Eigen::Matrix<value_type_t<EigMat2>, R1, C2> res = A_mult_inv_b.template
+cast<value_type_t<EigMat2>>(); res.d() = -multiply(A_mult_inv_b,
+mdivide_right(deriv_b, val_b)); return res;
 }
 */
 }  // namespace math
