@@ -1,13 +1,14 @@
 #ifndef STAN_MATH_FWD_FUN_MDIVIDE_RIGHT_HPP
 #define STAN_MATH_FWD_FUN_MDIVIDE_RIGHT_HPP
 
+#include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/multiply.hpp>
+#include <stan/math/fwd/fun/to_fvar.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/mdivide_right.hpp>
 #include <stan/math/prim/fun/multiply.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/fun/multiply.hpp>
-#include <stan/math/fwd/fun/to_fvar.hpp>
+#include <stan/math/prim/fun/subtract.hpp>
 #include <vector>
 
 namespace stan {
@@ -31,32 +32,19 @@ mdivide_right(const EigMat1& A, const EigMat2& b) {
     return {A.rows(), 0};
   }
 
-  Eigen::Matrix<T, R1, C1> val_A(A.rows(), A.cols());
-  Eigen::Matrix<T, R1, C1> deriv_A(A.rows(), A.cols());
-  Eigen::Matrix<T, R2, C2> val_b(b.rows(), b.cols());
-  Eigen::Matrix<T, R2, C2> deriv_b(b.rows(), b.cols());
 
-  const Eigen::Ref<const plain_type_t<EigMat1>>& A_ref = A;
-  for (int j = 0; j < A.cols(); j++) {
-    for (int i = 0; i < A.rows(); i++) {
-      val_A.coeffRef(i, j) = A_ref.coeff(i, j).val_;
-      deriv_A.coeffRef(i, j) = A_ref.coeff(i, j).d_;
-    }
-  }
+  auto&& A_ref = to_ref(A);
+  Eigen::Matrix<T, R1, C1> val_A = A_ref.val();
+  Eigen::Matrix<T, R1, C1> deriv_A = A_ref.d();
 
-  const Eigen::Ref<const plain_type_t<EigMat2>>& b_ref = b;
-  for (int j = 0; j < b.cols(); j++) {
-    for (int i = 0; i < b.rows(); i++) {
-      val_b.coeffRef(i, j) = b_ref.coeff(i, j).val_;
-      deriv_b.coeffRef(i, j) = b_ref.coeff(i, j).d_;
-    }
-  }
+  auto&& b_ref = to_ref(b);
+  Eigen::Matrix<T, R2, C2> val_b = b_ref.val();
+  Eigen::Matrix<T, R2, C2> deriv_b = b_ref.d();
 
   Eigen::Matrix<T, R1, C2> A_mult_inv_b = mdivide_right(val_A, val_b);
-
-  return to_fvar(A_mult_inv_b,
-                 mdivide_right(deriv_A, val_b)
-                     - A_mult_inv_b * mdivide_right(deriv_b, val_b));
+  Eigen::Matrix<fvar<T>, R1, C2> res = A_mult_inv_b.template cast<fvar<T>>().eval();
+  res.d() = subtract(mdivide_right(deriv_A, val_b), multiply(A_mult_inv_b, mdivide_right(deriv_b, val_b)));
+  return res;
 }
 
 template <typename EigMat1, typename EigMat2,
@@ -68,6 +56,7 @@ mdivide_right(const EigMat1& A, const EigMat2& b) {
   using T = typename value_type_t<EigMat1>::Scalar;
   constexpr int R1 = EigMat1::RowsAtCompileTime;
   constexpr int C1 = EigMat1::ColsAtCompileTime;
+  constexpr int C2 = EigMat2::ColsAtCompileTime;
 
   check_square("mdivide_right", "b", b);
   check_multiplicable("mdivide_right", "A", A, "b", b);
@@ -75,18 +64,13 @@ mdivide_right(const EigMat1& A, const EigMat2& b) {
     return {A.rows(), 0};
   }
 
-  Eigen::Matrix<T, R1, C1> val_A(A.rows(), A.cols());
-  Eigen::Matrix<T, R1, C1> deriv_A(A.rows(), A.cols());
 
-  const Eigen::Ref<const plain_type_t<EigMat1>>& A_ref = A;
-  for (int j = 0; j < A.cols(); j++) {
-    for (int i = 0; i < A.rows(); i++) {
-      val_A.coeffRef(i, j) = A_ref.coeff(i, j).val_;
-      deriv_A.coeffRef(i, j) = A_ref.coeff(i, j).d_;
-    }
-  }
-
-  return to_fvar(mdivide_right(val_A, b), mdivide_right(deriv_A, b));
+  auto&& A_ref = to_ref(A);
+  Eigen::Matrix<T, R1, C1> val_A = A_ref.val();
+  Eigen::Matrix<T, R1, C1> deriv_A = A_ref.d();
+  Eigen::Matrix<value_type_t<EigMat1>, R1, C2> res = mdivide_right(val_A, b).template cast<value_type_t<EigMat1>>();
+  res.d() = mdivide_right(deriv_A, b);
+  return res;
 }
 
 template <typename EigMat1, typename EigMat2,
@@ -107,20 +91,14 @@ mdivide_right(const EigMat1& A, const EigMat2& b) {
     return {A.rows(), 0};
   }
 
-  Eigen::Matrix<T, R2, C2> val_b(b.rows(), b.cols());
-  Eigen::Matrix<T, R2, C2> deriv_b(b.rows(), b.cols());
-
-  const Eigen::Ref<const plain_type_t<EigMat2>>& b_ref = b;
-  for (int j = 0; j < b.cols(); j++) {
-    for (int i = 0; i < b.rows(); i++) {
-      val_b.coeffRef(i, j) = b_ref.coeff(i, j).val_;
-      deriv_b.coeffRef(i, j) = b_ref.coeff(i, j).d_;
-    }
-  }
+  auto&& b_ref = to_ref(b);
+  Eigen::Matrix<T, R2, C2> val_b = b_ref.val();
+  Eigen::Matrix<T, R2, C2> deriv_b = b_ref.d();
 
   Eigen::Matrix<T, R1, C2> A_mult_inv_b = mdivide_right(A, val_b);
-
-  return to_fvar(A_mult_inv_b, -A_mult_inv_b * mdivide_right(deriv_b, val_b));
+  Eigen::Matrix<value_type_t<EigMat2>, R1, C2> res = A_mult_inv_b.template cast<value_type_t<EigMat2>>();
+  res.d() = -multiply(A_mult_inv_b, mdivide_right(deriv_b, val_b));
+  return res;
 }
 
 }  // namespace math

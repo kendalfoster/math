@@ -32,15 +32,10 @@ mdivide_right(const EigMat1& b, const EigMat2& A) {
   if (A.size() == 0) {
     return {b.rows(), 0};
   }
-
-  return Eigen::Matrix<T_return, EigMat2::RowsAtCompileTime,
-                       EigMat2::ColsAtCompileTime>(A)
-      .transpose()
+  return A.template cast<T_return>().eval().tranpose()
       .lu()
-      .solve(Eigen::Matrix<T_return, EigMat1::RowsAtCompileTime,
-                           EigMat1::ColsAtCompileTime>(b)
-                 .transpose())
-      .transpose();
+      .solve(b.template cast<T_return>().eval()
+                 ).transpose();
 }
 
 }  // namespace math

@@ -8,7 +8,7 @@ TEST(MathMixMatFun, mdivideLeftTri) {
     return stan::math::mdivide_left_tri<Eigen::Upper>(x, y);
   };
 
-  /*
+
   // size zero inputs
   Eigen::MatrixXd m00(0, 0);
   Eigen::VectorXd v0(0);
@@ -53,19 +53,18 @@ TEST(MathMixMatFun, mdivideLeftTri) {
   stan::test::expect_ad_matvar(f_up, a_tr, a);
   stan::test::expect_ad_matvar(f_up, a_tr, b);
   stan::test::expect_ad_matvar(f_up, a_tr, c);
-*/
+
   Eigen::MatrixXd y(3, 3);
-  y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
-  Eigen::MatrixXd y_tr = y.transpose();
+  y << 1, 0, 0, 4, 5, 0, 7, 8, 9;
   Eigen::VectorXd z(3);
   z << 1, 2, 3;
+  stan::test::expect_ad(f, y, z);
   Eigen::MatrixXd u(3, 3);
   u << 1, 2, 3, 6, 5, 4, 7, 8, 9;
-  stan::test::expect_ad(f, y, z);
-//  stan::test::expect_ad(f, u, y);
-  //stan::test::expect_ad(f_up, y_tr, z);
-  //stan::test::expect_ad(f_up, y_tr, y);
-  /*
+  stan::test::expect_ad(f, u, y);
+  Eigen::MatrixXd y_tr = y.transpose();
+  stan::test::expect_ad(f_up, y_tr, z);
+  stan::test::expect_ad(f_up, y_tr, y);
   stan::test::expect_ad_matvar(f, y, z);
   stan::test::expect_ad_matvar(f, u, y);
   stan::test::expect_ad_matvar(f_up, y_tr, z);
@@ -104,5 +103,5 @@ TEST(MathMixMatFun, mdivideLeftTri) {
   // exceptions: wrong types
   stan::test::expect_ad(f, m33, rv3);
   stan::test::expect_ad_matvar(f, m33, rv3);
-  */
+  
 }
