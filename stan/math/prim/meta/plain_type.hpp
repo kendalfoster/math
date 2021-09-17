@@ -62,14 +62,14 @@ struct has_eval<T, void_t<decltype(std::declval<T&>().eval())>>
 
 }  // namespace internal
 
-
 /**
  * Determines plain (non expression) type associated with \c T. For \c Eigen
  * expression it is a type the expression can be evaluated into.
  * @tparam T type to determine plain type of
  */
 template <typename T>
-struct plain_type<T, require_t<bool_constant<internal::has_eval<T>::value && !is_var_matrix<T>::value>>> {
+struct plain_type<T, require_t<bool_constant<internal::has_eval<T>::value
+                                             && !is_var_matrix<T>::value>>> {
   using type = std::decay_t<decltype(std::declval<T&>().eval())>;
 };
 

@@ -5,27 +5,27 @@ TEST(MathMixMatFun, mdivideRight) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::mdivide_right(x, y);
   };
-/*
-  // size zero inputs
-  Eigen::MatrixXd m00(0, 0);
-  Eigen::MatrixXd m20(2, 0);
-  Eigen::RowVectorXd rv0(0);
-  stan::test::expect_ad(f, m00, m00);
-  stan::test::expect_ad(f, m20, m00);
-  stan::test::expect_ad(f, rv0, m00);
+  /*
+    // size zero inputs
+    Eigen::MatrixXd m00(0, 0);
+    Eigen::MatrixXd m20(2, 0);
+    Eigen::RowVectorXd rv0(0);
+    stan::test::expect_ad(f, m00, m00);
+    stan::test::expect_ad(f, m20, m00);
+    stan::test::expect_ad(f, rv0, m00);
 
-  Eigen::MatrixXd aa(1, 1);
-  aa << 2;
-  Eigen::MatrixXd bb(1, 1);
-  bb << 3;
-  stan::test::expect_ad(f, bb, aa);
-  Eigen::MatrixXd b0(0, 1);
-  stan::test::expect_ad(f, b0, aa);
+    Eigen::MatrixXd aa(1, 1);
+    aa << 2;
+    Eigen::MatrixXd bb(1, 1);
+    bb << 3;
+    stan::test::expect_ad(f, bb, aa);
+    Eigen::MatrixXd b0(0, 1);
+    stan::test::expect_ad(f, b0, aa);
 
-  Eigen::RowVectorXd cc(1);
-  cc << 3;
-  stan::test::expect_ad(f, cc, aa);
-*/
+    Eigen::RowVectorXd cc(1);
+    cc << 3;
+    stan::test::expect_ad(f, cc, aa);
+  */
   Eigen::MatrixXd a(2, 2);
   a << 2, 3, 3, 7;
 
